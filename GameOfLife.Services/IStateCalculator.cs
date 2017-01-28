@@ -5,7 +5,7 @@
         int NextState(int currentState, int neighborsNumber);
     }
 
-    class StateCalculator : IStateCalculator
+    public class StateCalculator : IStateCalculator
     {
         public int NextState(int currentState, int neighborsNumber)
         {
