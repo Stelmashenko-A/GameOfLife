@@ -9,6 +9,10 @@
     {
         public int NextState(int currentState, int neighborsNumber)
         {
+            if (currentState == 0 && neighborsNumber == 3)
+            {
+                return 1;
+            }
             throw new System.NotImplementedException();
         }
     }
