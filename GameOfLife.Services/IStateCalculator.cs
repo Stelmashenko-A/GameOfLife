@@ -18,6 +18,12 @@
             {
                 return 1;
             }
+
+            if (currentState == 1 && (neighborsNumber < 2 || neighborsNumber > 3))
+            {
+                return 0;
+            }
+
             throw new System.NotImplementedException();
         }
     }
