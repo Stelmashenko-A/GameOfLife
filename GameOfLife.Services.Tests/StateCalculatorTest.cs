@@ -16,5 +16,22 @@ namespace GameOfLife.Services.Tests
             var newState = stateCalculator.NextState(currentState, neighborsNumber);
             Assert.AreEqual(IsAlive, newState);
         }
+
+        [Test]
+        public void CellStayAlive()
+        {
+            IStateCalculator stateCalculator = new StateCalculator();
+            const int currentState = IsAlive;
+            int[] neighborsNumbers = { 2, 3 };
+            int[] expectedResult = { IsAlive, IsAlive };
+            int[] actualResult = new int[2];
+
+            for (var i = 0; i < neighborsNumbers.Length; i++)
+            {
+                actualResult[i] = stateCalculator.NextState(currentState, neighborsNumbers[i]);
+            }
+
+            Assert.AreEqual(expectedResult, actualResult);
+        }
     }
 }
