@@ -24,6 +24,11 @@
                 return 0;
             }
 
+            if (currentState == 0 && neighborsNumber != 3)
+            {
+                return 0;
+            }
+
             throw new System.NotImplementedException();
         }
     }
