@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Field.cs" />
+    <Compile Include="IField.cs" />
     <Compile Include="IStateCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateCalculator.cs" />

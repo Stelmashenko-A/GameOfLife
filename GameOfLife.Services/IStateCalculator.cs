@@ -2,6 +2,6 @@
 {
     public interface IStateCalculator
     {
-        int NextState(int currentState, int neighborsNumber);
+        bool NextState(bool currentState, int neighborsNumber);
     }
 }

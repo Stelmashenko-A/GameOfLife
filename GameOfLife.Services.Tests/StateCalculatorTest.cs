@@ -4,14 +4,14 @@ namespace GameOfLife.Services.Tests
 {
     public class StateCalculatorTest
     {
-        public const int IsDead = 0;
-        public const int IsAlive = 1;
+        public const bool IsDead = false;
+        public const bool IsAlive = true;
 
         [Test]
         public void CellIsBorn()
         {
             IStateCalculator stateCalculator = new StateCalculator();
-            const int currentState = 0;
+            const bool currentState = false;
             const int neighborsNumber = 3;
             var newState = stateCalculator.NextState(currentState, neighborsNumber);
             Assert.AreEqual(IsAlive, newState);
@@ -21,10 +21,10 @@ namespace GameOfLife.Services.Tests
         public void CellStayAlive()
         {
             IStateCalculator stateCalculator = new StateCalculator();
-            const int currentState = IsAlive;
+            const bool currentState = IsAlive;
             int[] neighborsNumbers = { 2, 3 };
-            int[] expectedResult = { IsAlive, IsAlive };
-            int[] actualResult = new int[2];
+            bool[] expectedResult = { IsAlive, IsAlive };
+            bool[] actualResult = new bool[2];
 
             for (var i = 0; i < neighborsNumbers.Length; i++)
             {
@@ -38,10 +38,10 @@ namespace GameOfLife.Services.Tests
         public void CellDie()
         {
             IStateCalculator stateCalculator = new StateCalculator();
-            const int currentState = IsAlive;
+            const bool currentState = IsAlive;
             int[] neighborsNumbers = { 0, 1, 4, 5, 6, 7, 8 };
-            int[] expectedResult = { IsDead, IsDead, IsDead, IsDead, IsDead, IsDead, IsDead };
-            int[] actualResult = new int[7];
+            bool[] expectedResult = { IsDead, IsDead, IsDead, IsDead, IsDead, IsDead, IsDead };
+            bool[] actualResult = new bool[7];
 
             for (var i = 0; i < neighborsNumbers.Length; i++)
             {
@@ -55,10 +55,10 @@ namespace GameOfLife.Services.Tests
         public void CellNotBorn()
         {
             IStateCalculator stateCalculator = new StateCalculator();
-            const int currentState = IsDead;
+            const bool currentState = IsDead;
             int[] neighborsNumbers = { 0, 1, 2, 4, 5, 6, 7, 8 };
-            int[] expectedResult = { IsDead, IsDead, IsDead, IsDead, IsDead, IsDead, IsDead, IsDead };
-            int[] actualResult = new int[8];
+            bool[] expectedResult = { IsDead, IsDead, IsDead, IsDead, IsDead, IsDead, IsDead, IsDead };
+            bool[] actualResult = new bool[8];
 
             for (var i = 0; i < neighborsNumbers.Length; i++)
             {
