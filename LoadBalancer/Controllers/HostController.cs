@@ -13,7 +13,7 @@ namespace LoadBalancer.Controllers
 {
     public class HostController : ApiController
     {
-        
+
         protected RouteTable RouteTable { get; }
 
 
@@ -35,14 +35,14 @@ namespace LoadBalancer.Controllers
         }
 
         [System.Web.Http.HttpGet]
-        public AddHostResponce Add()
+        public AddHostResponce Add(string host, string port)
         {
             var requestForAdding = new RequestForAdding
             {
                 Key = AuthProvider.GetVerificationString(),
                 RequestId = Guid.NewGuid(),
                 TimeOfGet = DateTime.Now,
-                Host = HttpContext.Current.Request.UrlReferrer.Host + ":" + HttpContext.Current.Request.UrlReferrer.Port
+                Host = host + ":" + port
             };
             RouteTable.RequestForAddings.Add(requestForAdding);
             RouteTableStorage.Save(RouteTable);
@@ -71,7 +71,7 @@ namespace LoadBalancer.Controllers
                 RouteTableStorage.Save(RouteTable);
                 return new StatusCodeResult(HttpStatusCode.BadRequest, new HttpRequestMessage());
             }
-            if (requestForAdding.Host != HttpContext.Current.Request.UrlReferrer.Host + ":" + HttpContext.Current.Request.UrlReferrer.Port)
+            if (requestForAdding.Host != request.Host + ":" + request.Port)
             {
                 RouteTableStorage.Save(RouteTable);
                 return new StatusCodeResult(HttpStatusCode.BadGateway, new HttpRequestMessage());
@@ -82,7 +82,7 @@ namespace LoadBalancer.Controllers
                 return new StatusCodeResult(HttpStatusCode.GatewayTimeout, new HttpRequestMessage());
             }
 
-            var route = new Route {LastConnection = DateTime.Now, RouteId = Guid.NewGuid(), Host = HttpContext.Current.Request.UrlReferrer.Host + ":" + HttpContext.Current.Request.UrlReferrer.Port };
+            var route = new Route { LastConnection = DateTime.Now, RouteId = Guid.NewGuid(), Host = request.Host + ":" + request.Port };
             RouteTable.Routes.Add(route);
 
             RouteTableStorage.Save(RouteTable);
@@ -100,6 +100,8 @@ namespace LoadBalancer.Controllers
     {
         public Guid RequestId { get; set; }
         public string EncodedString { get; set; }
+        public string Host { get; set; }
+        public string Port { get; set; }
     }
 
     public interface IAuthProvider
@@ -108,7 +110,7 @@ namespace LoadBalancer.Controllers
         bool IsCorrect(string encoded, string verificationString);
     }
 
-    public class AuthProvider: IAuthProvider
+    public class AuthProvider : IAuthProvider
     {
         protected const string Key = "11110000111100001111000011110000";
         protected Random Random = new Random();

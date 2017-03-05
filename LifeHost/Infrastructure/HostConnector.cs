@@ -15,27 +15,28 @@ namespace LifeHost.Infrastructure
     {
         public HostMetadata Connect(string url)
         {
-             var host = new HostMetadata();
+            var host = new HostMetadata();
             using (var client = new HttpClient())
             {
                 var referer = ConfigurationSettings.AppSettings.Get("Referer");
+                var strs = referer.Split(':');
                 client.DefaultRequestHeaders.Referrer = new Uri(referer);
                 AddHostResponce responce = null;
-                var task = client.GetAsync(url+"/api/host/add?url=&port=").ContinueWith((taskwithresponse) =>
-                {
-                    var response = taskwithresponse.Result;
-                    var jsonString = response.Content.ReadAsStringAsync();
-                    jsonString.Wait();
-                    responce = JsonConvert.DeserializeObject<AddHostResponce>(jsonString.Result);
+                var task = client.GetAsync(url + "/api/host/add?host=" + strs[0] + "&port=" + strs[1]).ContinueWith((taskwithresponse) =>
+                        {
+                            var response = taskwithresponse.Result;
+                            var jsonString = response.Content.ReadAsStringAsync();
+                            jsonString.Wait();
+                            responce = JsonConvert.DeserializeObject<AddHostResponce>(jsonString.Result);
 
-                }); 
+                        });
                 task.Wait();
                 var markedStr = MarkString(responce.VerificationString);
-                var r = new AddHostVerificationRequest() {EncodedString = markedStr, RequestId = responce.RequestId};
+                var r = new AddHostVerificationRequest() { EncodedString = markedStr, RequestId = responce.RequestId, Host = strs[0], Port = strs[1] };
                 var buffer = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(r));
                 var byteContent = new ByteArrayContent(buffer);
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                
+
                 HttpStatusCode result = HttpStatusCode.BadRequest;
                 task = client.PostAsync(url + "/api/host/Verify", byteContent).ContinueWith((taskwithresponse) =>
                 {
@@ -61,10 +62,10 @@ namespace LifeHost.Infrastructure
 
             }
             return sb.ToString();
-        
-    }
 
-         
+        }
+
+
     }
 
     public class AddHostResponce
@@ -76,5 +77,7 @@ namespace LifeHost.Infrastructure
     {
         public Guid RequestId { get; set; }
         public string EncodedString { get; set; }
+        public string Host { get; set; }
+        public string Port { get; set; }
     }
 }
