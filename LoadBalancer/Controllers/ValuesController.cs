@@ -22,7 +22,7 @@ namespace LoadBalancer.Controllers
             return request.Id;
         }
 
-        public string Get(Guid host, int part)
+        public string Get(Guid task, int part)
         {
             /*найти хост, который обрабатывает данные
              * запросить данные
