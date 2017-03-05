@@ -4,37 +4,57 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Results;
+using System.Web.Mvc;
+using LifeHost.Infrastructure;
+using LifeHost.Storage;
+using Ninject;
 
 namespace LifeHost.Controllers
 {
-    [Authorize]
     public class ValuesController : ApiController
     {
-        // GET api/values
-        public IEnumerable<string> Get()
+        [Inject]
+        public IGameOfLife GameOfLife { get; set; }
+
+        [Inject]
+        public IGameStorage GameStorage { get; set; }
+
+        public OkResult Process(RequestForProcessing request)
         {
-            return new string[] { "value1", "value2" };
+            //надо только запустить метод и идти дальше
+            GameOfLife.Process(request);
+            return Ok();
         }
 
-        // GET api/values/5
-        public string Get(int id)
+        public Part Get(Guid taskId, int part)
         {
-            return "value";
+            return GameStorage.Get(taskId, part);
         }
 
-        // POST api/values
-        public void Post([FromBody]string value)
+        public OkResult RemoveAllParst(Guid taskId)
         {
+            GameStorage.RemoveAllParts(taskId);
+            return Ok();
         }
 
-        // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
+        public OkResult Ping()
         {
+            return Ok();
         }
 
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
-        }
+    }
+
+    public class RequestForProcessing
+    {
+        public Guid Id { get; set; }
+        public string Field { get; set; }
+        public int Steps { get; set; }
+        public int Pats { get; set; }
+    }
+
+    public interface IGameOfLife
+    {
+        void Process(RequestForProcessing request);
     }
 }

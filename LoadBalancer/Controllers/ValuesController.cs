@@ -1,40 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Web.Http;
-using LoadBalancer.Infrastructure;
-using Ninject;
+using LoadBalancer.Models;
 
 namespace LoadBalancer.Controllers
 {
-    [Authorize]
     public class ValuesController : ApiController
     {
-        [Inject]
-        protected RouteTable RouteTable { get; set; }
+        
         // GET api/values
-        public IEnumerable<string> Get()
+        public Guid Process(RequestForProcessing request)
         {
-            return new string[] { "value1", "value2" };
+            /* сгенерить айди для запроса
+             * сходить в RouteTable
+             * найти свободный хост (проверить последнее время отклика, если что пропинговать и выкинуть недоступные)
+             * записать айди запроса
+             * пометить как занятый
+             * сохранить
+             * отправить данные на урл хоста*/
+             
+
+            return request.Id;
         }
 
-        // GET api/values/5
-        public string Get(int id)
+        public string Get(Guid host, int part)
         {
-            return "value";
+            /*найти хост, который обрабатывает данные
+             * запросить данные
+             * переслать клиенту*/
+            return "";
         }
 
-        // POST api/values
-        public void Post([FromBody]string value)
+        public Hosts GetHosts()
         {
+            /*из таблицы дастать инфу о хостах и тасках которые они выполняют
+             * отправить на клиерт
+             */
+            return null;
         }
-
-        // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
-        }
+       
     }
 }
