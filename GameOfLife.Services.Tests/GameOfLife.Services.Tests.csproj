@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="ConverterTest.cs" />
     <Compile Include="FieldTest.cs" />
+    <Compile Include="GameOfLifeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateCalculatorTest.cs" />
   </ItemGroup>
