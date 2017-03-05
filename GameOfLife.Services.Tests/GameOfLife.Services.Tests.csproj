@@ -64,6 +64,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConverterTest.cs" />
     <Compile Include="FieldTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateCalculatorTest.cs" />
@@ -72,6 +73,10 @@
     <ProjectReference Include="..\GameOfLife.Services\GameOfLife.Services.csproj">
       <Project>{d1ef597b-9124-4479-b5a2-8a02e8e81261}</Project>
       <Name>GameOfLife.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LifeHost\LifeHost.csproj">
+      <Project>{f153e3b8-3129-46d0-a250-ff949a5197c0}</Project>
+      <Name>LifeHost</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

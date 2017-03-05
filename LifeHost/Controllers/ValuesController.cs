@@ -52,9 +52,4 @@ namespace LifeHost.Controllers
         public int Steps { get; set; }
         public int Pats { get; set; }
     }
-
-    public interface IGameOfLife
-    {
-        void Process(RequestForProcessing request);
-    }
 }
