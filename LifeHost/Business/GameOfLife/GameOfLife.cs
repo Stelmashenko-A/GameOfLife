@@ -25,7 +25,7 @@ namespace LifeHost.Business.GameOfLife
         {
             var data = Converter.Convert(request.Field);
             Field = new Field(data, StateCalculator);
-            var partSize = request.Steps / request.Pats;
+            var partSize = request.Steps / request.Parts;
             var partCounter = 0;
 
             var list = new List<string>();

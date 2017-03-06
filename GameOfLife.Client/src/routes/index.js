@@ -3,9 +3,13 @@ import CoreLayout from '../layouts/CoreLayout'
 import Home from './Home'
 import CounterRoute from './Counter'
 import DashboardRoute from './Dashboard'
+import axios from 'axios'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
+Object.assign(axios.defaults, {
+		baseURL: 'http://localhost:8087/'
+	});
 
 export const createRoutes = (store) => ({
   path: '/',

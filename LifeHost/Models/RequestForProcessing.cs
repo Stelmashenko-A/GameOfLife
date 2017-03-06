@@ -7,6 +7,6 @@ namespace LifeHost.Models
         public Guid Id { get; set; }
         public string Field { get; set; }
         public int Steps { get; set; }
-        public int Pats { get; set; }
+        public int Parts { get; set; }
     }
 }

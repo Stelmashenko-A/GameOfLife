@@ -12,11 +12,27 @@ export const STEPS_CHANGE = 'STEPS_CHANGE',
   SET_LOADED = 'SET_LOADED',
   FIELD_CHANGE = 'FIELD_CHANGE',
   CURRENT_STEP_CHANGE = 'CURRENT_STEP_CHANGE',
-  STEPS_PATH_CHANGE = 'STEPS_PATH_CHANGE';
+  STEPS_PATH_CHANGE = 'STEPS_PATH_CHANGE',
+  TASK_ID_CHANGE = 'TASK_ID_CHANGE',
+  PARTS_LOADED_CHANGE = 'PARTS_LOADED_CHANGE';
 
 // ------------------------------------
 // Actions
 // ------------------------------------
+export const setPartsLoadedHandler = (partsLoaded) => {
+  return {
+    type: PARTS_LOADED_CHANGE,
+    payload: partsLoaded
+  }
+}
+
+export const setTaskIdHandler = (taskId) => {
+  return {
+    type: TASK_ID_CHANGE,
+    payload: taskId
+  }
+}
+
 export const setStepsPathHandler = (stepsPath) => {
   return {
     type: STEPS_PATH_CHANGE,
@@ -91,7 +107,7 @@ export const nextButtonHandler = (e) => {
   return (dispatch, getState) => {
     var state = getState().dashboard;
 
-    if (state.currentStep === state.steps)
+    if (state.currentStep == state.steps)
       return;
 
     dispatch(setCurrentStepHandler(state.currentStep + 1));
@@ -109,7 +125,7 @@ export const nextButtonMaxHandler = (e) => {
   return (dispatch, getState) => {
     var state = getState().dashboard;
 
-    if (state.currentStep === state.steps)
+    if (state.currentStep == state.steps)
       return;
 
     dispatch(setLoadingHandler(true));
@@ -124,7 +140,7 @@ export const nextButtonMaxHandler = (e) => {
 
         dispatch(setFieldHandler(matrix));
 
-        if (state.currentStep === state.steps)
+        if (state.currentStep == state.steps)
           dispatch(setLoadingHandler(false));
       }, 500 * i);
     }
@@ -142,7 +158,6 @@ export const prevButtonHandler = (e) => {
     dispatch(setCurrentStepHandler(state.currentStep - 1));
 
     state = getState().dashboard;
-
     var matrix = generateMatrix(state.fieldSize, state.fieldSize, state.stepsPath, state.steps, state.currentStep);
 
     dispatch(setFieldHandler(matrix));
@@ -155,7 +170,7 @@ export const prevButtonMaxHandler = (e) => {
   return (dispatch, getState) => {
     var state = getState().dashboard;
 
-    if (state.currentStep === 0)
+    if (state.currentStep == 0)
       return;
 
     dispatch(setLoadingHandler(true));
@@ -170,7 +185,7 @@ export const prevButtonMaxHandler = (e) => {
 
         dispatch(setFieldHandler(matrix));
 
-        if (state.currentStep === 0)
+        if (state.currentStep == 0)
           dispatch(setLoadingHandler(false));
 
       }, 500 * i);
@@ -182,34 +197,87 @@ export const calculateHandler = (e) => {
   e.preventDefault();
   return (dispatch, getState) => {
     dispatch(setLoadingHandler(true));
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        dispatch(setLoadingHandler(false));
-        dispatch(setStepsPathHandler(
-          [
-            '1100010001000000000000001',
-            '1001010001000000000010000',
-            '1000100001000000000010010',
-            '1001100000000000000110000',
-            '0001100000000000001010001',
-            '0001100000000000000100101'
-          ]));
-        dispatch(setLoadedHandler(true));
+	var data = getState().dashboard;
 
-        resolve()
-      }, 1000)
-    })
+	var path = _.clone(data.stepsPath);
+	path.push(matrixToString(data.field))
+
+	dispatch(setStepsPathHandler(path));
+
+	return axios({
+        method: 'Post',
+        url: '/values/process',
+        data: {
+          Id: null,
+          Field: matrixToString(data.field),
+          Steps: data.steps,
+          Parts: data.parts,
+        }
+      })
+      .then(function(response) {
+        if (response.data != null) {
+          dispatch(setLoadingHandler(false));
+          dispatch(setTaskIdHandler(response.data));
+
+          data = getState().dashboard;
+
+          getStepsPath(data.taskId, data.parts - data.partsLoaded - 1, data.partsLoaded, dispatch, getState);
+        }
+
+		dispatch(setLoadingHandler(false));
+      }).catch(function(error) {
+        dispatch(setLoadingHandler(false));
+      });
   }
 }
 
+function getStepsPath(taskId, part, partsLoaded, dispatch, getState) {
+  dispatch(setLoadingHandler(true));
+
+  return axios({
+      method: 'Get',
+      url: '/values/get/' + taskId + '/' + part
+    })
+    .then(function(response) {
+		var data = getState().dashboard;
+
+		if (response.data != "\"null\"") {
+			var preParse = JSON.parse(response.data);
+			var result = JSON.parse(preParse);
+
+			dispatch(setLoadingHandler(false));
+
+			var paths = _.clone(data.stepsPath);
+
+			for (let path of result) {
+				paths.push(path);
+			}
+
+			dispatch(setStepsPathHandler(paths));
+
+			dispatch(setPartsLoadedHandler(partsLoaded + 1));
+		}
+
+		data = getState().dashboard;
+
+		if (data.parts != data.partsLoaded) {
+		  setTimeout(function() {
+			getStepsPath(data.taskId, data.parts - data.partsLoaded, data.partsLoaded, dispatch, getState);
+		  }, 1000);
+		} else {
+		  dispatch(setLoadedHandler(true));
+		}
+    }).catch(function(error) {
+      dispatch(setLoadingHandler(false));
+    });
+}
 
 
 function generateMatrix(x, y, stepsPath, steps, currentStep) {
   var currentStepPath = null,
     stepIndex = 0;
   var matrix = new Array(x);
-
-  if (stepsPath !== null)
+  if (stepsPath !== null && stepsPath.length !== 0)
     currentStepPath = stepsPath[currentStep];
 
   for (var i = 0; i < x; i++) {
@@ -229,6 +297,18 @@ function generateMatrix(x, y, stepsPath, steps, currentStep) {
   return matrix;
 }
 
+function matrixToString(matrix) {
+  var result = '';
+
+  for (let row of matrix) {
+    for (let col of row) {
+      result += col;
+    }
+  }
+
+  return result;
+}
+
 export const actions = {
   onStepsChangeHandler,
   onPartsChangeHandler,
@@ -245,6 +325,12 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+  [PARTS_LOADED_CHANGE]: (state, action) => Object.assign({}, state, {
+    partsLoaded: action.payload
+  }),
+  [TASK_ID_CHANGE]: (state, action) => Object.assign({}, state, {
+    taskId: action.payload
+  }),
   [STEPS_PATH_CHANGE]: (state, action) => Object.assign({}, state, {
     stepsPath: action.payload
   }),
@@ -290,10 +376,13 @@ function getIitialState() {
     steps: 5,
     parts: 1,
     fieldSize: fieldSize,
-    stepsPath: null,
+    stepsPath: [],
     field: generateMatrix(fieldSize, fieldSize, null, 5, 0),
     loading: false,
-    loaded: false
+    loaded: false,
+    partsLoaded: 0,
+    taskId: null,
+    host: ''
   };
 }
 

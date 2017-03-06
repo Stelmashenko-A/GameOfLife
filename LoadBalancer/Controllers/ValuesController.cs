@@ -60,7 +60,7 @@ namespace LoadBalancer.Controllers
                     var content = new StringContent(
                         JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
-                    httpClient.PostAsync("/api/values/process", content);
+                    httpClient.PostAsync("/values/process", content);
 
                     return request.Id;
                 }
@@ -69,6 +69,7 @@ namespace LoadBalancer.Controllers
 
                 return null;
             }
+
             return null;
         }
 
@@ -86,6 +87,7 @@ namespace LoadBalancer.Controllers
                 {
                     BaseAddress = new Uri($"http://{processingHost.Host}")
                 };
+
                 return httpClient.GetAsync($"/values/getpart/{task}/{part}")
                     .Result
                     .Content

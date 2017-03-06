@@ -14,7 +14,7 @@ namespace GameOfLife.Services.Tests
             gol.StateCalculator = new StateCalculator();
             gol.Converter = new Converter();
             gol.GameStorage=new GameStorage();
-            gol.Process(new RequestForProcessing {Field = "0000000100000100111000000",Id = Guid.NewGuid(),Pats = 10,Steps = 100});
+            gol.Process(new RequestForProcessing {Field = "0000000100000100111000000",Id = Guid.NewGuid(),Parts = 10,Steps = 100});
         }
 
     }
