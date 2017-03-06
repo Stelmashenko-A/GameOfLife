@@ -1,6 +1,6 @@
 using System;
 using LifeHost.Business.GameStorage;
-using LifeHost.Controllers;
+using LifeHost.Models;
 using NUnit.Framework;
 
 namespace GameOfLife.Services.Tests
@@ -10,7 +10,7 @@ namespace GameOfLife.Services.Tests
         [Test]
         public void TestGame()
         {
-            LifeHost.Controllers.GameOfLife gol = new LifeHost.Controllers.GameOfLife();
+            var gol = new LifeHost.Business.GameOfLife.GameOfLife();
             gol.StateCalculator = new StateCalculator();
             gol.Converter = new Converter();
             gol.GameStorage=new GameStorage();
