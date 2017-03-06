@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Results;
-using LoadBalancer.Infrastructure;
+using LoadBalancer.Business;
+using LoadBalancer.Business.RouteTableStorage;
+using LoadBalancer.Models;
 
 namespace LoadBalancer.Controllers
 {

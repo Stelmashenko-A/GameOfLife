@@ -1,6 +1,6 @@
 using System.Web.Mvc;
+using LoadBalancer.Business.RouteTableStorage;
 using LoadBalancer.Controllers;
-using LoadBalancer.Infrastructure;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(LoadBalancer.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(LoadBalancer.App_Start.NinjectWebCommon), "Stop")]
@@ -52,7 +52,7 @@ namespace LoadBalancer.App_Start
                 RegisterServices(kernel);
                 return kernel;
             }
-            catch
+            catch(Exception ex)
             {
                 kernel.Dispose();
                 throw;
@@ -67,8 +67,10 @@ namespace LoadBalancer.App_Start
         {
             RouteTableStorage routeTableStorage = new RouteTableStorage();
             kernel.Bind<RouteTableStorage>().ToConstant(routeTableStorage);
+
             var routeTable = routeTableStorage.Load();
             kernel.Bind<RouteTable>().ToConstant(routeTable);
+
             kernel.Bind<IAuthProvider>().ToConstant(new AuthProvider());
         }
     }

@@ -1,6 +1,6 @@
 using System;
+using LifeHost.Business.GameStorage;
 using LifeHost.Controllers;
-using LifeHost.Storage;
 using NUnit.Framework;
 
 namespace GameOfLife.Services.Tests

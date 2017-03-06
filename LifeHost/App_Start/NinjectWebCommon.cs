@@ -1,5 +1,8 @@
 using System.Web.Mvc;
+using LifeHost.Business.GameOfLife;
+using LifeHost.Business.GameStorage;
 using LifeHost.Infrastructure;
+using LifeHost.Models;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(LifeHost.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(LifeHost.App_Start.NinjectWebCommon), "Stop")]
@@ -13,7 +16,8 @@ namespace LifeHost.App_Start
 
     using Ninject;
     using Ninject.Web.Common;
-
+    using Controllers;
+    using GameOfLife.Services;
     public static class NinjectWebCommon 
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
@@ -64,8 +68,14 @@ namespace LifeHost.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            var hc=new HostConnector();
-            kernel.Bind<HostMetadata>().ToConstant(hc.Connect("http://localhost:8087"));
+            var connector =new HostConnector();
+            kernel.Bind<HostMetadata>().ToConstant(connector.Connect("http://localhost:8087"));
+
+            kernel.Bind<IGameOfLife>().To(typeof(Business.GameOfLife.GameOfLife));
+            kernel.Bind<IGameStorage>().To(typeof(GameStorage));
+            kernel.Bind<IStateCalculator>().To(typeof(StateCalculator));
+            kernel.Bind<IConverter>().To(typeof(Converter));
+            
         }        
     }
 }

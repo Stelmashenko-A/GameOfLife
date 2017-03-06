@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Results;
-using System.Web.Mvc;
-using LifeHost.Infrastructure;
-using LifeHost.Storage;
+using LifeHost.Business.GameOfLife;
+using LifeHost.Business.GameStorage;
 using Ninject;
+using LifeHost.Models;
+using Newtonsoft.Json;
+using Task = System.Threading.Tasks.Task;
 
 namespace LifeHost.Controllers
 {
+    [RoutePrefix("values")]
     public class ValuesController : ApiController
     {
         [Inject]
@@ -20,36 +19,36 @@ namespace LifeHost.Controllers
         [Inject]
         public IGameStorage GameStorage { get; set; }
 
+        [HttpPost]
+        [Route("process")]
         public OkResult Process(RequestForProcessing request)
         {
-            //надо только запустить метод и идти дальше
-            GameOfLife.Process(request);
+            Task.Run(() => GameOfLife.Process(request));
             return Ok();
         }
 
-        public Part Get(Guid taskId, int part)
+        [HttpGet]
+        [Route("getpart/{taskId}/{part}")]
+        public string GetTaskPart(Guid taskId, int part)
         {
-            return GameStorage.Get(taskId, part);
+            var result = GameStorage.Get(taskId, part);
+            return JsonConvert.SerializeObject(result?.Steps);
         }
 
+        [HttpGet]
+        [Route("remove/{taskId}")]
         public OkResult RemoveAllParst(Guid taskId)
         {
             GameStorage.RemoveAllParts(taskId);
             return Ok();
         }
 
+        [HttpGet]
+        [Route("ping")]
         public OkResult Ping()
         {
             return Ok();
         }
 
-    }
-
-    public class RequestForProcessing
-    {
-        public Guid Id { get; set; }
-        public string Field { get; set; }
-        public int Steps { get; set; }
-        public int Pats { get; set; }
     }
 }

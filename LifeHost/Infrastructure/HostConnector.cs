@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Web;
+using LifeHost.Models;
 using Newtonsoft.Json;
 
 namespace LifeHost.Infrastructure
@@ -64,20 +62,5 @@ namespace LifeHost.Infrastructure
             return sb.ToString();
 
         }
-
-
-    }
-
-    public class AddHostResponce
-    {
-        public Guid RequestId { get; set; }
-        public string VerificationString { get; set; }
-    }
-    public class AddHostVerificationRequest
-    {
-        public Guid RequestId { get; set; }
-        public string EncodedString { get; set; }
-        public string Host { get; set; }
-        public string Port { get; set; }
     }
 }
