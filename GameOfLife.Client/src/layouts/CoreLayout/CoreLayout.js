@@ -2,26 +2,17 @@ import React from 'react'
 import Header from '../../components/Header'
 import './CoreLayout.scss'
 import '../../styles/core.scss'
-import {
-  Grid,
-  Row,
-  Col,
-  ControlLabel,
-  Radio,
-  Button
-} from 'react-bootstrap'
+import { Grid } from 'react-bootstrap'
 
-export const CoreLayout = ({children}) => (
-  <Grid>
-    <Header/>
-    <div className='core-layout__viewport'>
-      <Row>
-        <Col xs={12}>
-          {children}
-        </Col>
-      </Row>
-    </div>
-  </Grid>
+export const CoreLayout = ({ children }) => (
+  <div>
+    <Grid className='core-layout__viewport'>
+      <Header />
+    </Grid>
+    <Grid className='core-layout__viewport'>
+      {children}
+    </Grid>
+  </div>
 )
 
 CoreLayout.propTypes = {

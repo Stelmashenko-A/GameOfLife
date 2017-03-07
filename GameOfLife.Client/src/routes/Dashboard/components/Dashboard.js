@@ -1,14 +1,11 @@
 import React from 'react'
 import {
-  Grid,
   Row,
   Col,
   FormGroup,
   FormControl,
-  ControlLabel,
   ButtonToolbar,
   ButtonGroup,
-  Checkbox,
   Button
 } from 'react-bootstrap'
 
@@ -16,9 +13,8 @@ import './Dashboard.scss'
 import GameField from './GameField'
 
 export const Dashboard = (props) => {
-
   return (
-    <div>
+    <Row>
       <Col xs={12}>
         <div className='dashboard'>
           Dashboard
@@ -26,7 +22,7 @@ export const Dashboard = (props) => {
       </Col>
       <Col xs={12}>
         <div className='game-board'>
-          <GameField field={props.field} onFieldChange={props.onFieldChange} loading={props.loading} />
+          <GameField field={props.field} onFieldChange={props.onFieldChange} loading={props.loading}/>
         </div>
       </Col>
       <Col xs={12}>
@@ -34,20 +30,27 @@ export const Dashboard = (props) => {
           <Row>
             <Col xs={4}>
               <FormGroup>
-                <FormControl type="number" min={0} defaultValue={props.steps} disabled={props.loading || props.loaded} placeholder="Steps" onChange={props.onStepsChange}/>
+                <FormControl type='number' min={0} defaultValue={props.steps} disabled={props.loading} placeholder='Steps' onChange={props.onStepsChange}/>
               </FormGroup>
             </Col>
             <Col xs={4}>
               <FormGroup>
-                <FormControl type="number" min={1} defaultValue={props.parts} disabled={props.loading || props.loaded} placeholder="Parts" onChange={props.onPartsChange}/>
+                <FormControl type='number' min={1} defaultValue={props.parts} disabled={props.loading} placeholder='Parts' onChange={props.onPartsChange}/>
               </FormGroup>
             </Col>
             <Col xs={4}>
-				<FormGroup>
-				  <FormControl type="number" min={1} defaultValue={props.fieldSize} disabled={props.loading || props.loaded} placeholder="Size" onChange={props.onSizeChange}/>
-				</FormGroup>
+              <FormGroup>
+                <FormControl type='number' min={1} defaultValue={props.fieldSize} disabled={props.loading} placeholder='Size' onChange={props.onSizeChange}/>
+              </FormGroup>
             </Col>
           </Row>
+        </div>
+      </Col>
+      <Col xs={12} className={props.host ? '' : 'hidden'}>
+        <div>
+          <h4>Host: {props.host} <span className={props.loaded ? 'text-success' : 'text-info'}>{props.loaded ? 'processed' : 'processes'} your request</span></h4>
+	      <h5 className={props.partsLoaded === props.parts ? 'hidden' : ''}>Part {props.partsLoaded} of {props.parts} loaded</h5>
+          <h5 className={props.partsLoaded === props.parts ? '' : 'hidden'}>All {props.parts} parts was successfuly loaded you can view result above.</h5>
         </div>
       </Col>
       <Col xs={12}>
@@ -55,23 +58,23 @@ export const Dashboard = (props) => {
           <ButtonToolbar>
             <ButtonGroup>
               <Button disabled={props.loading || !props.loaded} onClick={props.prevButtonMaxHandler}>{'<<'}</Button>
-              <Button disabled={props.loading || !props.loaded}  onClick={props.prevButtonHandler}>{'<'}</Button>
+              <Button disabled={props.loading || !props.loaded} onClick={props.prevButtonHandler}>{'<'}</Button>
             </ButtonGroup>
             <ButtonGroup>
               <Button disabled>{props.currentStep}</Button>
             </ButtonGroup>
             <ButtonGroup>
-              <Button disabled={props.loading || !props.loaded}  onClick={props.nextButtonHandler}>{'>'}</Button>
-              <Button disabled={props.loading || !props.loaded}  onClick={props.nextButtonMaxHandler}>{'>>'}</Button>
+              <Button disabled={props.loading || !props.loaded} onClick={props.nextButtonHandler}>{'>'}</Button>
+              <Button disabled={props.loading || !props.loaded} onClick={props.nextButtonMaxHandler}>{'>>'}</Button>
             </ButtonGroup>
-
-			<ButtonGroup className='pull-right'>
-              <Button disabled={props.loading} onClick={props.calculateHandler}>Calculate</Button>
+            <ButtonGroup className='pull-right'>
+              <Button disabled={props.loading} onClick={props.resetButtonHandler} bsStyle='danger'>Reset</Button>
+              <Button disabled={props.loading || props.loaded} onClick={props.calculateHandler} bsStyle='success'>Calculate</Button>
             </ButtonGroup>
           </ButtonToolbar>
         </div>
       </Col>
-    </div>
+    </Row>
   )
 }
 

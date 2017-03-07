@@ -15,10 +15,18 @@ export const CURRENT_STEP_CHANGE = 'CURRENT_STEP_CHANGE'
 export const STEPS_PATH_CHANGE = 'STEPS_PATH_CHANGE'
 export const TASK_ID_CHANGE = 'TASK_ID_CHANGE'
 export const PARTS_LOADED_CHANGE = 'PARTS_LOADED_CHANGE'
+export const HOST_CHANGE = 'HOST_CHANGE'
 
 // ------------------------------------
 // Actions
 // ------------------------------------
+export const setHostHandler = (host) => {
+  return {
+    type: HOST_CHANGE,
+    payload: host
+  }
+}
+
 export const setPartsLoadedHandler = (partsLoaded) => {
   return {
     type: PARTS_LOADED_CHANGE,
@@ -70,35 +78,58 @@ export const setLoadedHandler = (loaded) => {
 
 export const onStepsChangeHandler = (e) => {
   var value = _.isNil(e.target.value) ? 0 : _.parseInt(e.target.value)
-  return {
-    type: STEPS_CHANGE,
-    payload: value
+  return (dispatch, getState) => {
+    var data = getState().dashboard
+    if (data.loaded) {
+      resetProggress(dispatch)
+    }
+    dispatch({
+      type: STEPS_CHANGE,
+      payload: value
+    })
   }
 }
 
 export const onPartsChangeHandler = (e) => {
   var value = _.isNil(e.target.value) ? 0 : _.parseInt(e.target.value)
-  return {
-    type: PARTS_CHANGE,
-    payload: value
+  return (dispatch, getState) => {
+    var data = getState().dashboard
+    if (data.loaded) {
+      resetProggress(dispatch)
+    }
+    dispatch({
+      type: PARTS_CHANGE,
+      payload: value
+    })
   }
 }
 
 export const onSizeChangeHandler = (e) => {
   var value = _.isNil(e.target.value) ? 0 : _.parseInt(e.target.value)
-
-  return {
-    type: SIZE_CHANGE,
-    payload: value
+  return (dispatch, getState) => {
+    var data = getState().dashboard
+    if (data.loaded) {
+      resetProggress(dispatch)
+    }
+    dispatch({
+      type: SIZE_CHANGE,
+      payload: value
+    })
   }
 }
 
 export const onFieldChangeHandler = (e) => {
-  return {
-    type: FIELD_INPUT_CHANGE,
-    payload: !(('' + e.target.className + ' ').replace(/[\n\t]/g, ' ').indexOf('active') > -1),
-    x: e.target.getAttribute('x'),
-    y: e.target.getAttribute('y')
+  return (dispatch, getState) => {
+    var data = getState().dashboard
+    if (data.loaded) {
+      resetProggress(dispatch)
+    }
+    dispatch({
+      type: FIELD_INPUT_CHANGE,
+      payload: !(('' + e.target.className + ' ').replace(/[\n\t]/g, ' ').indexOf('active') > -1),
+      x: e.target.getAttribute('x'),
+      y: e.target.getAttribute('y')
+    })
   }
 }
 
@@ -206,6 +237,10 @@ export const calculateHandler = (e) => {
     dispatch(setLoadingHandler(true))
     var data = getState().dashboard
 
+    if (data.loaded) {
+      resetProggress(dispatch)
+    }
+    data = getState().dashboard
     var path = _.clone(data.stepsPath)
     path.push(matrixToString(data.field))
 
@@ -225,13 +260,12 @@ export const calculateHandler = (e) => {
         if (response.data != null) {
           dispatch(setLoadingHandler(false))
           dispatch(setTaskIdHandler(response.data.TaskId))
+          dispatch(setHostHandler(response.data.Host))
 
           data = getState().dashboard
 
-          getStepsPath(data.taskId, data.partsLoaded, data.partsLoaded, dispatch, getState)
+          getStepsPath(data.taskId, data.partsLoaded, dispatch, getState)
         }
-
-        dispatch(setLoadingHandler(false))
       }).catch(function (error) {
         if (error) {
           console.log(error)
@@ -241,45 +275,62 @@ export const calculateHandler = (e) => {
   }
 }
 
-function getStepsPath (taskId, part, partsLoaded, dispatch, getState) {
+export const resetButtonHandler = (e) => {
+  e.preventDefault()
+  return (dispatch, getState) => {
+    var data = getState().dashboard
+    if (data.loaded) {
+      resetProggress(dispatch)
+    }
+  }
+}
+
+function resetProggress (dispatch) {
+  dispatch(setStepsPathHandler([]))
+  dispatch(setHostHandler(''))
+  dispatch(setTaskIdHandler(null))
+  dispatch(setPartsLoadedHandler(0))
+  dispatch(setCurrentStepHandler(0))
+  dispatch(setLoadedHandler(false))
+}
+
+function getStepsPath (taskId, part, dispatch, getState) {
   dispatch(setLoadingHandler(true))
 
   return axios({
     method: 'Get',
     url: '/values/get/' + taskId + '/' + part
-  })
-    .then(function (response) {
-      var data = getState().dashboard
-      var responseData = JSON.parse(response.data)
-      if (!_.isNil(responseData)) {
-        dispatch(setLoadingHandler(false))
+  }).then(function (response) {
+    var data = getState().dashboard
+    var responseData = JSON.parse(response.data)
+    if (!_.isNil(responseData)) {
+      var paths = _.clone(data.stepsPath)
 
-        var paths = _.clone(data.stepsPath)
-
-        for (let path of responseData) {
-          paths.push(path)
-        }
-
-        dispatch(setStepsPathHandler(paths))
-
-        dispatch(setPartsLoadedHandler(data.partsLoaded + 1))
+      for (let path of responseData) {
+        paths.push(path)
       }
 
-      data = getState().dashboard
+      dispatch(setStepsPathHandler(paths))
 
-      if (data.parts !== data.partsLoaded) {
-        setTimeout(function () {
-          getStepsPath(data.taskId, data.partsLoaded, data.partsLoaded, dispatch, getState)
-        }, 1000)
-      } else {
-        dispatch(setLoadedHandler(true))
-      }
-    }).catch(function (error) {
-      if (error) {
-        console.log(error)
-      }
+      dispatch(setPartsLoadedHandler(data.partsLoaded + 1))
+    }
+
+    data = getState().dashboard
+
+    if (data.parts !== data.partsLoaded) {
+      setTimeout(function () {
+        getStepsPath(data.taskId, data.partsLoaded, dispatch, getState)
+      }, 1000)
+    } else {
+      dispatch(setLoadedHandler(true))
       dispatch(setLoadingHandler(false))
-    })
+    }
+  }).catch(function (error) {
+    if (error) {
+      console.log(error)
+    }
+    dispatch(setLoadingHandler(false))
+  })
 }
 
 function generateMatrix (x, y, stepsPath, steps, currentStep) {
@@ -327,13 +378,17 @@ export const actions = {
   nextButtonMaxHandler,
   prevButtonHandler,
   prevButtonMaxHandler,
-  calculateHandler
+  calculateHandler,
+  resetButtonHandler
 }
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+  [HOST_CHANGE]: (state, action) => Object.assign({}, state, {
+    host: action.payload
+  }),
   [PARTS_LOADED_CHANGE]: (state, action) => Object.assign({}, state, {
     partsLoaded: action.payload
   }),
@@ -377,7 +432,7 @@ const ACTION_HANDLERS = {
   }
 }
 function getIitialState () {
-  const fieldSize = 5
+  const fieldSize = 20
 
   return {
     currentStep: 0,
