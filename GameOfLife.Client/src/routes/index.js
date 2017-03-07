@@ -8,8 +8,8 @@ import axios from 'axios'
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
 Object.assign(axios.defaults, {
-		baseURL: 'http://localhost:8087/'
-	});
+  baseURL: 'http://localhost:8087/'
+})
 
 export const createRoutes = (store) => ({
   path: '/',
@@ -17,7 +17,7 @@ export const createRoutes = (store) => ({
   indexRoute: Home,
   childRoutes: [
     CounterRoute(store),
-    DashboardRoute(store),
+    DashboardRoute(store)
   ]
 })
 

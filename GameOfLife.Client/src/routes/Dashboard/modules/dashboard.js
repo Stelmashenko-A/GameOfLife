@@ -224,16 +224,18 @@ export const calculateHandler = (e) => {
       .then(function (response) {
         if (response.data != null) {
           dispatch(setLoadingHandler(false))
-          dispatch(setTaskIdHandler(response.data))
+          dispatch(setTaskIdHandler(response.data.TaskId))
 
           data = getState().dashboard
 
-          getStepsPath(data.taskId, data.parts - data.partsLoaded - 1, data.partsLoaded, dispatch, getState)
+          getStepsPath(data.taskId, data.partsLoaded, data.partsLoaded, dispatch, getState)
         }
 
         dispatch(setLoadingHandler(false))
       }).catch(function (error) {
-        console.log(error)
+        if (error) {
+          console.log(error)
+        }
         dispatch(setLoadingHandler(false))
       })
   }
@@ -248,29 +250,26 @@ function getStepsPath (taskId, part, partsLoaded, dispatch, getState) {
   })
     .then(function (response) {
       var data = getState().dashboard
-
-      if (response.data !== '"null"') {
-        var preParse = JSON.parse(response.data)
-        var result = JSON.parse(preParse)
-
+      var responseData = JSON.parse(response.data)
+      if (!_.isNil(responseData)) {
         dispatch(setLoadingHandler(false))
 
         var paths = _.clone(data.stepsPath)
 
-        for (let path of result) {
+        for (let path of responseData) {
           paths.push(path)
         }
 
         dispatch(setStepsPathHandler(paths))
 
-        dispatch(setPartsLoadedHandler(partsLoaded + 1))
+        dispatch(setPartsLoadedHandler(data.partsLoaded + 1))
       }
 
       data = getState().dashboard
 
       if (data.parts !== data.partsLoaded) {
         setTimeout(function () {
-          getStepsPath(data.taskId, data.parts - data.partsLoaded, data.partsLoaded, dispatch, getState)
+          getStepsPath(data.taskId, data.partsLoaded, data.partsLoaded, dispatch, getState)
         }, 1000)
       } else {
         dispatch(setLoadedHandler(true))
