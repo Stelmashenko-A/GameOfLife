@@ -33,7 +33,7 @@ namespace LifeHost.Business.GameOfLife
             {
                 var newStep = Field.GetNextState();
                 list.Add(Converter.Convert(newStep));
-                if (i % partSize == 0 && i != 0)
+                if ((i+1) % partSize == 0)
                 {
                     var part = new Part { Id = Guid.NewGuid(), PartNumber = partCounter, Steps = list, TaskId = request.Id };
                     GameStorage.Save(part);
