@@ -23,7 +23,7 @@ namespace LoadBalancer.Controllers
 
         [HttpPost]
         [Route("process")]
-        public Guid? Process(RequestForProcessing request)
+        public IHttpActionResult Process(RequestForProcessing request)
         {
             request.Id = Guid.NewGuid();
 
@@ -62,20 +62,19 @@ namespace LoadBalancer.Controllers
 
                     httpClient.PostAsync("/values/process", content);
 
-                    return request.Id;
+                    return Ok(new { TaskId = request.Id, route.Host });
                 }
                 routeTable.Routes.Remove(route);
                 _routeTableStorage.Save(routeTable);
 
-                return null;
+                return BadRequest();
             }
-
-            return null;
+            return BadRequest();
         }
 
         [HttpGet]
         [Route("get/{task}/{part}")]
-        public string Get(Guid task, int part)
+        public IHttpActionResult Get(Guid task, int part)
         {
             var processingHost = _routeTableStorage
                 .Load().Routes
@@ -87,26 +86,22 @@ namespace LoadBalancer.Controllers
                 {
                     BaseAddress = new Uri($"http://{processingHost.Host}")
                 };
-
-                return httpClient.GetAsync($"/values/getpart/{task}/{part}")
-                    .Result
-                    .Content
-                    .ReadAsStringAsync()
-                    .Result;
+                return Ok(httpClient.GetAsync($"/values/getpart/{task}/{part}").Result
+                    .Content.ReadAsStringAsync().Result);
             }
-            return null;
+            return BadRequest();
         }
 
         [HttpGet]
         [Route("remove/{taskId}")]
-        public bool Remove(Guid taskId)
+        public IHttpActionResult Remove(Guid taskId)
         {
             var routeTable = _routeTableStorage.Load();
             var route = routeTable.Routes.FirstOrDefault(r => r.CurrentTask.Contains(taskId));
 
             if (!(route?.CurrentTask.Remove(taskId)??true))
             {
-                return false;
+                return BadRequest();
             }
             _routeTableStorage.Save(routeTable);
 
@@ -116,14 +111,18 @@ namespace LoadBalancer.Controllers
             };
             var result = httpClient.GetAsync($"/values/remove/{taskId}").Result;
 
-            return result.IsSuccessStatusCode;
+            if (result.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpGet]
         [Route("hosts")]
-        public Hosts GetHosts()
+        public IHttpActionResult GetHosts()
         {
-            return new Hosts(_routeTableStorage.Load().Routes);
+            return Ok(new Hosts(_routeTableStorage.Load().Routes));
         }
     }
 }
