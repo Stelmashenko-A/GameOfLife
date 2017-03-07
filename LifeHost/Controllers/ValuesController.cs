@@ -23,7 +23,7 @@ namespace LifeHost.Controllers
         [Route("process")]
         public OkResult Process(RequestForProcessing request)
         {
-            GameOfLife.Process(request);
+            Task.Factory.StartNew(() => GameOfLife.Process(request));
             return Ok();
         }
 
