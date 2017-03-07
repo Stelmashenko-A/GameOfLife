@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Results;
 using LifeHost.Business.GameOfLife;
@@ -29,10 +30,10 @@ namespace LifeHost.Controllers
 
         [HttpGet]
         [Route("getpart/{taskId}/{part}")]
-        public string GetTaskPart(Guid taskId, int part)
+        public IEnumerable<string> GetTaskPart(Guid taskId, int part)
         {
             var result = GameStorage.Get(taskId, part);
-            return JsonConvert.SerializeObject(result?.Steps);
+            return result?.Steps;
         }
 
         [HttpGet]
