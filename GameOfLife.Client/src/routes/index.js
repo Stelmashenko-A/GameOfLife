@@ -3,6 +3,7 @@ import CoreLayout from '../layouts/CoreLayout'
 import Home from './Home'
 import CounterRoute from './Counter'
 import DashboardRoute from './Dashboard'
+import AdminRoute from './Admin'
 import axios from 'axios'
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -17,7 +18,8 @@ export const createRoutes = (store) => ({
   indexRoute: Home,
   childRoutes: [
     CounterRoute(store),
-    DashboardRoute(store)
+    DashboardRoute(store),
+    AdminRoute(store)
   ]
 })
 

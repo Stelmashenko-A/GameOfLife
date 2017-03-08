@@ -16,6 +16,7 @@ export const STEPS_PATH_CHANGE = 'STEPS_PATH_CHANGE'
 export const TASK_ID_CHANGE = 'TASK_ID_CHANGE'
 export const PARTS_LOADED_CHANGE = 'PARTS_LOADED_CHANGE'
 export const HOST_CHANGE = 'HOST_CHANGE'
+export const REMOVE_TASK = 'REMOVE_TASK'
 
 // ------------------------------------
 // Actions
@@ -141,7 +142,7 @@ export const nextButtonHandler = (e) => {
   return (dispatch, getState) => {
     var state = getState().dashboard
 
-    if (state.currentStep === state.steps) {
+    if (state.currentStep === state.stepsPath.length) {
       return
     }
 
@@ -160,7 +161,7 @@ export const nextButtonMaxHandler = (e) => {
   return (dispatch, getState) => {
     var state = getState().dashboard
 
-    if (state.currentStep === state.steps) {
+    if (state.currentStep === state.stepsPath.length) {
       return
     }
 
@@ -285,13 +286,32 @@ export const resetButtonHandler = (e) => {
   }
 }
 
+export const removeTaskHandler = () => {
+  return (dispatch, getState) => {
+    var state = getState().dashboard
+    if (!_.isNil(state.taskId)) {
+      dispatch({
+        type: REMOVE_TASK
+      })
+      axios({
+        method: 'Get',
+        url: '/values/remove/' + state.taskId
+      }).then(function (response) {
+        dispatch(setTaskIdHandler(null))
+      }).catch(function (error) {
+        console.log(error)
+      })
+    }
+  }
+}
+
 function resetProggress (dispatch) {
   dispatch(setStepsPathHandler([]))
   dispatch(setHostHandler(''))
-  dispatch(setTaskIdHandler(null))
   dispatch(setPartsLoadedHandler(0))
   dispatch(setCurrentStepHandler(0))
   dispatch(setLoadedHandler(false))
+  dispatch(removeTaskHandler())
 }
 
 function getStepsPath (taskId, part, dispatch, getState) {
@@ -316,14 +336,16 @@ function getStepsPath (taskId, part, dispatch, getState) {
     }
 
     data = getState().dashboard
-
+    if (data.partsLoaded === 1) {
+      dispatch(setLoadedHandler(true))
+    }
     if (data.parts !== data.partsLoaded) {
       setTimeout(function () {
         getStepsPath(data.taskId, data.partsLoaded, dispatch, getState)
       }, 1000)
     } else {
-      dispatch(setLoadedHandler(true))
       dispatch(setLoadingHandler(false))
+      dispatch(removeTaskHandler())
     }
   }).catch(function (error) {
     if (error) {

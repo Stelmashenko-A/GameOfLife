@@ -57,15 +57,15 @@ export const Dashboard = (props) => {
         <div className='actions'>
           <ButtonToolbar>
             <ButtonGroup>
-              <Button disabled={props.loading || !props.loaded} onClick={props.prevButtonMaxHandler}>{'<<'}</Button>
-              <Button disabled={props.loading || !props.loaded} onClick={props.prevButtonHandler}>{'<'}</Button>
+              <Button disabled={!props.loaded} onClick={props.prevButtonMaxHandler}>{'<<'}</Button>
+              <Button disabled={!props.loaded} onClick={props.prevButtonHandler}>{'<'}</Button>
             </ButtonGroup>
             <ButtonGroup>
               <Button disabled>{props.currentStep}</Button>
             </ButtonGroup>
             <ButtonGroup>
-              <Button disabled={props.loading || !props.loaded} onClick={props.nextButtonHandler}>{'>'}</Button>
-              <Button disabled={props.loading || !props.loaded} onClick={props.nextButtonMaxHandler}>{'>>'}</Button>
+              <Button disabled={!props.loaded} onClick={props.nextButtonHandler}>{'>'}</Button>
+              <Button disabled={!props.loaded} onClick={props.nextButtonMaxHandler}>{'>>'}</Button>
             </ButtonGroup>
             <ButtonGroup className='pull-right'>
               <Button disabled={props.loading} onClick={props.resetButtonHandler} bsStyle='danger'>Reset</Button>
