@@ -77,7 +77,7 @@ export const Dashboard = (props) => {
             loaded</h5>
           <h5 className={props.partsLoaded === props.parts
             ? ''
-            : 'hidden'}>All {' '} {props.parts}
+            : 'hidden'}>All {' '} {props.parts} {' '}
             parts was successfuly loaded you can view result above.</h5>
         </div>
       </Col>

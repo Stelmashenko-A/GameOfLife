@@ -1,0 +1,12 @@
+.tasks-header, .tasks-row {
+	text-align: center;
+}
+.tasks-header:nth-child(0){
+	border-right: 1px solid #ddd;
+}
+.tasks-row{
+	border-top: 1px solid #ddd;
+	&:not(:first-child){
+		padding-top: 5px;
+	}
+}

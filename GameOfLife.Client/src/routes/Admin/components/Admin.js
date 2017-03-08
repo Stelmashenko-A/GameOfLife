@@ -2,13 +2,9 @@ import React from 'react'
 import {
   Row,
   Col,
-  FormGroup,
-  FormControl,
-  ButtonToolbar,
-  ButtonGroup,
-  Button,
   Table
 } from 'react-bootstrap'
+import HostsInfo from './HostsInfo'
 
 import './Admin.scss'
 
@@ -18,8 +14,7 @@ export const Admin = (props) => {
       <tr key={index}>
         <td>{host.RouteId}</td>
         <td>{host.Host}</td>
-        <td>{'Task ID'}</td>
-        <td>{'Part #'}</td>
+        <td style={{ paddingLeft: '15px', paddingRight: '15px' }}><HostsInfo tasks={host.CurrentTasks} /></td>
         <td>{host.LastConnection}</td>
       </tr>
     )
@@ -33,8 +28,7 @@ export const Admin = (props) => {
             <tr>
               <th>{'Route ID'}</th>
               <th>{'Host'}</th>
-              <th>{'Task ID'}</th>
-              <th>{'Part #'}</th>
+              <th>{'Tasks info'}</th>
               <th>{'Last Connection'}</th>
             </tr>
           </thead>
