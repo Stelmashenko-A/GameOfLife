@@ -95,7 +95,7 @@ namespace LoadBalancer.Controllers
         public IHttpActionResult Remove(Guid taskId)
         {
             var routeTable = _routeTableStorage.Load();
-            var route = routeTable.Routes.FirstOrDefault(r => r.CurrentTasks.Any(x=>x.TaskId ==taskId));
+            var route = routeTable.Routes.FirstOrDefault(r => r.CurrentTasks.Any(x => x.TaskId == taskId));
             var forRemoving = route?.CurrentTasks.FirstOrDefault(x => x.TaskId == taskId);
             if (!(route?.CurrentTasks.Remove(forRemoving) ?? true))
             {
@@ -121,6 +121,17 @@ namespace LoadBalancer.Controllers
         public IHttpActionResult GetHosts()
         {
             return Ok(new Hosts(_routeTableStorage.Load().Routes));
+        }
+
+        [HttpGet]
+        [Route("updatepart")]
+        public IHttpActionResult UpdatePart(Guid taskId, int part)
+        {
+            var table = _routeTableStorage.Load();
+            var task = table.Routes.SelectMany(x => x.CurrentTasks).FirstOrDefault(x => x.TaskId == taskId);
+            if (task != null) task.PartId = part;
+            _routeTableStorage.Save(table);
+            return Ok();
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using GameOfLife.Services;
 using LifeHost.Business.GameStorage;
 using LifeHost.Controllers;
 using LifeHost.Models;
+using Newtonsoft.Json;
 using Ninject;
 
 namespace LifeHost.Business.GameOfLife
@@ -35,16 +37,29 @@ namespace LifeHost.Business.GameOfLife
                 list.Add(Converter.Convert(newStep));
                 if ((i+1) % partSize == 0)
                 {
-                    var part = new Part { Id = Guid.NewGuid(), PartNumber = partCounter, Steps = list, TaskId = request.Id };
+                    var part = new Part { Id = Guid.NewGuid(),
+                        PartNumber = partCounter,
+                        Steps = list, TaskId = request.Id };
                     GameStorage.Save(part);
                     list = new List<string>();
                     partCounter++;
+                    SendInfo(request.Id, partCounter);
                 }
             }
             if (list.Count != 0)
             {
                 var part = new Part { Id = Guid.NewGuid(), PartNumber = partCounter, Steps = list, TaskId = request.Id };
                 GameStorage.Save(part);
+            }
+            SendInfo(request.Id, -1);
+        }
+
+        protected void SendInfo(Guid taskId, int partId)
+        {
+            using (var client = new HttpClient())
+            {
+                client.GetAsync("http://localhost:8087/values/updatepart?taskid=" + taskId.ToString() + "&part=" +
+                                partId).Wait();
             }
         }
     }
