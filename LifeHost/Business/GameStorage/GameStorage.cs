@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Raven.Abstractions.Data;
 using Raven.Client;
 using Raven.Client.Document;
 
@@ -24,7 +25,6 @@ namespace LifeHost.Business.GameStorage
         {
             using (var session = Store.OpenSession())
             {
-                var random = new Random();
                 session.Store(part);
                 session.SaveChanges();
             }

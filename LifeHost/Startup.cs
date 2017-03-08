@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using LifeHost.Business.GameStorage;
+using LifeHost.ScheduledJobs;
 using Microsoft.Owin;
 using Owin;
 
@@ -12,6 +11,13 @@ namespace LifeHost
     {
         public void Configuration(IAppBuilder app)
         {
+            using (var sb = new IndexBuilder())
+            {
+                sb.Build();
+            }
+
+            var jr = new JobRunner();
+            jr.Run();
         }
     }
 }

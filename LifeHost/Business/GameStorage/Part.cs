@@ -9,5 +9,6 @@ namespace LifeHost.Business.GameStorage
         public Guid TaskId { get; set; }
         public int PartNumber { get; set; }
         public IEnumerable<string> Steps { get; set; }
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
     }
 }
