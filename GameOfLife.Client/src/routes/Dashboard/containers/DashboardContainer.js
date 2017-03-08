@@ -14,7 +14,8 @@ const mapDispatchToProps = {
   prevButtonMaxHandler: actions.prevButtonMaxHandler,
   prevButtonHandler: actions.prevButtonHandler,
   calculateHandler: actions.calculateHandler,
-  resetButtonHandler: actions.resetButtonHandler
+  resetButtonHandler: actions.resetButtonHandler,
+  hideErrorHandler: actions.hideErrorHandler
 }
 
 const mapStateToProps = (state) => ({
@@ -26,7 +27,8 @@ const mapStateToProps = (state) => ({
   loading: state.dashboard.loading,
   loaded: state.dashboard.loaded,
   host: state.dashboard.host,
-  partsLoaded: state.dashboard.partsLoaded
+  partsLoaded: state.dashboard.partsLoaded,
+  error: state.dashboard.error
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register)

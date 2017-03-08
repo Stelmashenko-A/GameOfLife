@@ -6,7 +6,8 @@ import {
   FormControl,
   ButtonToolbar,
   ButtonGroup,
-  Button
+  Button,
+  Alert
 } from 'react-bootstrap'
 
 import './Dashboard.scss'
@@ -46,11 +47,38 @@ export const Dashboard = (props) => {
           </Row>
         </div>
       </Col>
-      <Col xs={12} className={props.host ? '' : 'hidden'}>
+      <Col xs={12} className={props.error
+        ? ''
+        : 'hidden'}>
+        <Alert bsStyle='danger'>
+          <h4>Oh snap! You got an error!</h4>
+          <p>{props.error}</p>
+          <p>
+            <Button bsStyle='default' onClick={props.hideErrorHandler}>{'Ok'}</Button>
+          </p>
+        </Alert>
+      </Col>
+      <Col xs={12} className={props.host
+        ? ''
+        : 'hidden'}>
         <div>
-          <h4>Host: {props.host} <span className={props.loaded ? 'text-success' : 'text-info'}>{props.loaded ? 'processed' : 'processes'} your request</span></h4>
-	      <h5 className={props.partsLoaded === props.parts ? 'hidden' : ''}>Part {props.partsLoaded} of {props.parts} loaded</h5>
-          <h5 className={props.partsLoaded === props.parts ? '' : 'hidden'}>All {props.parts} parts was successfuly loaded you can view result above.</h5>
+          <h4>Host: {props.host}
+            <span className={props.loaded
+              ? 'text-success'
+              : 'text-info'}>{props.loaded
+                ? ' processed '
+                : ' processes '}
+              your request</span>
+          </h4>
+          <h5 className={props.partsLoaded === props.parts
+            ? 'hidden'
+            : ''}>Part {props.partsLoaded} {' '}
+             of {props.parts}  {' '}
+            loaded</h5>
+          <h5 className={props.partsLoaded === props.parts
+            ? ''
+            : 'hidden'}>All {' '} {props.parts}
+            parts was successfuly loaded you can view result above.</h5>
         </div>
       </Col>
       <Col xs={12}>
@@ -68,7 +96,7 @@ export const Dashboard = (props) => {
               <Button disabled={!props.loaded} onClick={props.nextButtonMaxHandler}>{'>>'}</Button>
             </ButtonGroup>
             <ButtonGroup className='pull-right'>
-              <Button disabled={props.loading} onClick={props.resetButtonHandler} bsStyle='danger'>Reset</Button>
+              <Button disabled={props.loading || !props.loaded} onClick={props.resetButtonHandler} bsStyle='danger'>Reset</Button>
               <Button disabled={props.loading || props.loaded} onClick={props.calculateHandler} bsStyle='success'>Calculate</Button>
             </ButtonGroup>
           </ButtonToolbar>

@@ -17,10 +17,26 @@ export const TASK_ID_CHANGE = 'TASK_ID_CHANGE'
 export const PARTS_LOADED_CHANGE = 'PARTS_LOADED_CHANGE'
 export const HOST_CHANGE = 'HOST_CHANGE'
 export const REMOVE_TASK = 'REMOVE_TASK'
+export const SET_ERROR = 'SET_ERROR'
+export const HIDE_ERROR = 'HIDE_ERROR'
 
 // ------------------------------------
 // Actions
 // ------------------------------------
+export const hideErrorHandler = (e) => {
+  e.preventDefault()
+  return (dispatch) => {
+    dispatch(setErrorHandler(null))
+  }
+}
+
+export const setErrorHandler = (error) => {
+  return {
+    type: SET_ERROR,
+    payload: error
+  }
+}
+
 export const setHostHandler = (host) => {
   return {
     type: HOST_CHANGE,
@@ -256,23 +272,21 @@ export const calculateHandler = (e) => {
         Steps: data.steps,
         Parts: data.parts
       }
+    }).then(function (response) {
+      if (response.data != null) {
+        dispatch(setTaskIdHandler(response.data.TaskId))
+        dispatch(setHostHandler(response.data.Host))
+
+        data = getState().dashboard
+
+        getStepsPath(data.taskId, data.partsLoaded, dispatch, getState)
+      }
+    }).catch(function (error) {
+      if (error.Message) {
+        dispatch(setErrorHandler(error.Message))
+      }
+      dispatch(setLoadingHandler(false))
     })
-      .then(function (response) {
-        if (response.data != null) {
-          dispatch(setLoadingHandler(false))
-          dispatch(setTaskIdHandler(response.data.TaskId))
-          dispatch(setHostHandler(response.data.Host))
-
-          data = getState().dashboard
-
-          getStepsPath(data.taskId, data.partsLoaded, dispatch, getState)
-        }
-      }).catch(function (error) {
-        if (error) {
-          console.log(error)
-        }
-        dispatch(setLoadingHandler(false))
-      })
   }
 }
 
@@ -299,7 +313,9 @@ export const removeTaskHandler = () => {
       }).then(function (response) {
         dispatch(setTaskIdHandler(null))
       }).catch(function (error) {
-        console.log(error)
+        if (error.Message) {
+          dispatch(setErrorHandler(error.Message))
+        }
       })
     }
   }
@@ -315,7 +331,9 @@ function resetProggress (dispatch) {
 }
 
 function getStepsPath (taskId, part, dispatch, getState) {
-  dispatch(setLoadingHandler(true))
+  if (!getState().dashboard.loading) {
+    dispatch(setLoadingHandler(true))
+  }
 
   return axios({
     method: 'Get',
@@ -348,8 +366,8 @@ function getStepsPath (taskId, part, dispatch, getState) {
       dispatch(removeTaskHandler())
     }
   }).catch(function (error) {
-    if (error) {
-      console.log(error)
+    if (error.Message) {
+      dispatch(setErrorHandler(error.Message))
     }
     dispatch(setLoadingHandler(false))
   })
@@ -401,13 +419,17 @@ export const actions = {
   prevButtonHandler,
   prevButtonMaxHandler,
   calculateHandler,
-  resetButtonHandler
+  resetButtonHandler,
+  hideErrorHandler
 }
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+  [SET_ERROR]: (state, action) => Object.assign({}, state, {
+    error: action.payload
+  }),
   [HOST_CHANGE]: (state, action) => Object.assign({}, state, {
     host: action.payload
   }),
@@ -467,7 +489,8 @@ function getIitialState () {
     loaded: false,
     partsLoaded: 0,
     taskId: null,
-    host: ''
+    host: '',
+    error: ''
   }
 }
 
