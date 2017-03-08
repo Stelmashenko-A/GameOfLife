@@ -25,8 +25,41 @@ namespace LoadBalancer.Business.RouteTableStorage
             using (var session = Store.OpenSession())
             {
 
-                return session.Query<RouteTable>().FirstOrDefault() ??
+                var table= session.Query<RouteTable>().FirstOrDefault() ??
                        new RouteTable {Routes = new List<Route>()};
+                var hosts = table.Routes.Select(x => x.Host).OrderBy(x=>x).Distinct();
+                foreach (var host in hosts)
+                {
+                    if (table.Routes.Count(x => x.Host == host) > 1)
+                    {
+                        var lastConnection = table.Routes.Where(x => x.Host == host).Select(x => x.LastConnection).Max();
+                        var forRemoving = table.Routes.Where(x => x.Host == host && x.LastConnection != lastConnection).ToList();
+                        foreach (var route in forRemoving)
+                        {
+                            table.Routes.Remove(route);
+                        
+                        }
+                    }
+                }
+
+                hosts = table.RequestForAddings.Select(x => x.Host).OrderBy(x => x).Distinct();
+                foreach (var host in hosts)
+                {
+                    if (table.RequestForAddings.Count(x => x.Host == host) > 1)
+                    {
+                        var lastConnection = table.RequestForAddings.Where(x => x.Host == host).Select(x => x.TimeOfGet).Max();
+                        var forRemoving = table.RequestForAddings.Where(x => x.Host == host && x.TimeOfGet != lastConnection).ToList();
+                        foreach (var route in forRemoving)
+                        {
+                            table.RequestForAddings.Remove(route);
+
+                        }
+                    }
+                }
+
+                session.Store(table);
+                session.SaveChanges();
+                return table;
 
             }
         }
