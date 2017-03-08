@@ -158,7 +158,7 @@ export const nextButtonHandler = (e) => {
   return (dispatch, getState) => {
     var state = getState().dashboard
 
-    if (state.currentStep === state.stepsPath.length) {
+    if (state.currentStep === state.stepsPath.length - 1) {
       return
     }
 
@@ -177,27 +177,12 @@ export const nextButtonMaxHandler = (e) => {
   return (dispatch, getState) => {
     var state = getState().dashboard
 
-    if (state.currentStep === state.stepsPath.length) {
+    if (state.currentStep === state.stepsPath.length - 1) {
       return
     }
 
     dispatch(setLoadingHandler(true))
-
-    for (var i = 0; i < state.steps - state.currentStep; i++) {
-      setTimeout(() => {
-        dispatch(setCurrentStepHandler(state.currentStep + 1))
-
-        state = getState().dashboard
-
-        var matrix = generateMatrix(state.fieldSize, state.fieldSize, state.stepsPath, state.steps, state.currentStep)
-
-        dispatch(setFieldHandler(matrix))
-
-        if (state.currentStep === state.steps) {
-          dispatch(setLoadingHandler(false))
-        }
-      }, 500 * i)
-    }
+    animateSteps(dispatch, getState, false)
   }
 }
 
@@ -229,22 +214,7 @@ export const prevButtonMaxHandler = (e) => {
     }
 
     dispatch(setLoadingHandler(true))
-
-    for (var i = 0; i < state.currentStep; i++) {
-      setTimeout(() => {
-        dispatch(setCurrentStepHandler(state.currentStep - 1))
-
-        state = getState().dashboard
-
-        var matrix = generateMatrix(state.fieldSize, state.fieldSize, state.stepsPath, state.steps, state.currentStep)
-
-        dispatch(setFieldHandler(matrix))
-
-        if (state.currentStep === 0) {
-          dispatch(setLoadingHandler(false))
-        }
-      }, 500 * i)
-    }
+    animateSteps(dispatch, getState, true)
   }
 }
 
@@ -318,6 +288,26 @@ export const removeTaskHandler = () => {
         }
       })
     }
+  }
+}
+
+function animateSteps (dispatch, getState, reverse) {
+  var state = getState().dashboard
+
+  dispatch(setCurrentStepHandler(reverse ? state.currentStep - 1 : state.currentStep + 1))
+
+  state = getState().dashboard
+
+  var matrix = generateMatrix(state.fieldSize, state.fieldSize, state.stepsPath, state.steps, state.currentStep)
+
+  dispatch(setFieldHandler(matrix))
+
+  if ((!reverse && state.currentStep === state.steps) || (reverse && state.currentStep === 0)) {
+    dispatch(setLoadingHandler(false))
+  } else {
+    _.delay(() => {
+      animateSteps(dispatch, getState, reverse)
+    }, 500)
   }
 }
 
