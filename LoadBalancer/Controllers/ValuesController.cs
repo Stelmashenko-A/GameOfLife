@@ -31,13 +31,13 @@ namespace LoadBalancer.Controllers
             var routeTable = _routeTableStorage.Load();
 
             var freeHosts = routeTable.Routes
-                .Where(r => r.Host != ":-1" && !(r.CurrentTask?.Any() ?? false))
+                .Where(r => r.Host != ":-1" && !(r.CurrentTasks?.Any() ?? false))
                 .ToList();
 
             if (!freeHosts.Any())
             {
                 freeHosts = routeTable.Routes
-                    .OrderByDescending(r => r.CurrentTask.Count)
+                    .OrderByDescending(r => r.CurrentTasks.Count)
                     .ToList();
             }
 
@@ -48,11 +48,11 @@ namespace LoadBalancer.Controllers
                 var result = httpClient.GetAsync("/values/ping").Result;
                 if (result.IsSuccessStatusCode)
                 {
-                    if (route.CurrentTask == null)
+                    if (route.CurrentTasks == null)
                     {
-                        route.CurrentTask = new List<Guid>();
+                        route.CurrentTasks = new List<GameTask>();
                     }
-                    route.CurrentTask.Add(request.Id);
+                    route.CurrentTasks.Add(new GameTask() { TaskId = request.Id, PartId = 0 });
                     route.LastConnection = DateTime.Now;
 
                     _routeTableStorage.Save(routeTable);
@@ -76,7 +76,7 @@ namespace LoadBalancer.Controllers
         {
             var processingHost = _routeTableStorage
                 .Load().Routes
-                .FirstOrDefault(r => r.CurrentTask?.Contains(task) ?? false);
+                .FirstOrDefault(r => r.CurrentTasks?.Any(x => x.TaskId == task) ?? false);
 
             if (processingHost != null)
             {
@@ -95,9 +95,9 @@ namespace LoadBalancer.Controllers
         public IHttpActionResult Remove(Guid taskId)
         {
             var routeTable = _routeTableStorage.Load();
-            var route = routeTable.Routes.FirstOrDefault(r => r.CurrentTask.Contains(taskId));
-
-            if (!(route?.CurrentTask.Remove(taskId)??true))
+            var route = routeTable.Routes.FirstOrDefault(r => r.CurrentTasks.Any(x=>x.TaskId ==taskId));
+            var forRemoving = route?.CurrentTasks.FirstOrDefault(x => x.TaskId == taskId);
+            if (!(route?.CurrentTasks.Remove(forRemoving) ?? true))
             {
                 return BadRequest("Error occured while deleting of task");
             }
