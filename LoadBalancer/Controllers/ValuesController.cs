@@ -31,13 +31,15 @@ namespace LoadBalancer.Controllers
             var routeTable = _routeTableStorage.Load();
 
             var freeHosts = routeTable.Routes
-                .Where(r => r.Host != ":-1" && !(r.CurrentTasks?.Any() ?? false))
+                .Where(r => r.Host != ":-1" 
+                && r.CurrentTasks != null 
+                && (!r.CurrentTasks.Any() || r.CurrentTasks.All(x => x.PartId == -1)))
                 .ToList();
 
             if (!freeHosts.Any())
             {
                 freeHosts = routeTable.Routes
-                    .OrderByDescending(r => r.CurrentTasks.Count)
+                    .OrderBy(r => r.CurrentTasks.Count(x => x.PartId != -1))
                     .ToList();
             }
 

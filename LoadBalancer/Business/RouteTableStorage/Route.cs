@@ -7,7 +7,7 @@ namespace LoadBalancer.Business.RouteTableStorage
     {
         public Guid RouteId { get; set; }
         public string Host { get; set; }
-        public IList<GameTask> CurrentTasks { get; set; }
+        public IList<GameTask> CurrentTasks { get; set; } = new List<GameTask>();
         public DateTime LastConnection { get; set; }
     }
 
