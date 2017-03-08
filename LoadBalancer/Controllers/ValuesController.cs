@@ -66,10 +66,8 @@ namespace LoadBalancer.Controllers
                 }
                 routeTable.Routes.Remove(route);
                 _routeTableStorage.Save(routeTable);
-
-                return BadRequest();
             }
-            return BadRequest();
+            return BadRequest("There are not free hosts.");
         }
 
         [HttpGet]
@@ -89,7 +87,7 @@ namespace LoadBalancer.Controllers
                 return Ok(httpClient.GetAsync($"/values/getpart/{task}/{part}").Result
                     .Content.ReadAsStringAsync().Result);
             }
-            return BadRequest();
+            return BadRequest("Host, processing your task, was not be found.");
         }
 
         [HttpGet]
@@ -101,7 +99,7 @@ namespace LoadBalancer.Controllers
 
             if (!(route?.CurrentTask.Remove(taskId)??true))
             {
-                return BadRequest();
+                return BadRequest("Error occured while deleting of task");
             }
             _routeTableStorage.Save(routeTable);
 
@@ -115,7 +113,7 @@ namespace LoadBalancer.Controllers
             {
                 return Ok();
             }
-            return BadRequest();
+            return BadRequest("Host, processing your task, was not be found.");
         }
 
         [HttpGet]
