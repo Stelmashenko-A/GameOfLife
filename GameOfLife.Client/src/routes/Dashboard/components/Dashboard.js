@@ -23,7 +23,7 @@ export const Dashboard = (props) => {
       </Col>
       <Col xs={12}>
         <div className='game-board'>
-          <GameField field={props.field} onFieldChange={props.onFieldChange} loading={props.loading}/>
+          <GameField field={props.field} onFieldChange={props.onFieldChange} loading={props.loading} animation={props.animation}/>
         </div>
       </Col>
       <Col xs={12}>

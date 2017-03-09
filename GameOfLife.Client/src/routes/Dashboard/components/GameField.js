@@ -17,7 +17,7 @@ export const GameField = (props) => {
     return React.DOM.tr({
       key: index
     }, row.map(function(col, index2) {
-      return React.DOM.td({key: index2},<div onClick={props.loading? null : props.onFieldChange} disabled={props.loading} x={index} y={index2} className={`point ${col == 0? '' : 'active'}`} ></div>);
+      return React.DOM.td({key: index2},<div onClick={props.loading || props.animation? null : props.onFieldChange} disabled={props.loading || props.animation} x={index} y={index2} className={`point ${col == 0? '' : 'active'}`} ></div>);
     }));
   });
 
