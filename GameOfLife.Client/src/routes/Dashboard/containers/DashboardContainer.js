@@ -28,7 +28,8 @@ const mapStateToProps = (state) => ({
   loaded: state.dashboard.loaded,
   host: state.dashboard.host,
   partsLoaded: state.dashboard.partsLoaded,
-  error: state.dashboard.error
+  error: state.dashboard.error,
+  animation: state.dashboard.animation
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register)

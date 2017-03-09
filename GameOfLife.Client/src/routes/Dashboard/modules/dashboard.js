@@ -19,10 +19,18 @@ export const HOST_CHANGE = 'HOST_CHANGE'
 export const REMOVE_TASK = 'REMOVE_TASK'
 export const SET_ERROR = 'SET_ERROR'
 export const HIDE_ERROR = 'HIDE_ERROR'
+export const SET_ANIMATION = 'SET_ANIMATION'
 
 // ------------------------------------
 // Actions
 // ------------------------------------
+export const setAnimation = (animation) => {
+  return {
+    type: SET_ANIMATION,
+    payload: animation
+  }
+}
+
 export const hideErrorHandler = (e) => {
   e.preventDefault()
   return (dispatch) => {
@@ -182,6 +190,7 @@ export const nextButtonMaxHandler = (e) => {
     }
 
     dispatch(setLoadingHandler(true))
+    dispatch(setAnimation(true))
     animateSteps(dispatch, getState, false)
   }
 }
@@ -214,6 +223,7 @@ export const prevButtonMaxHandler = (e) => {
     }
 
     dispatch(setLoadingHandler(true))
+    dispatch(setAnimation(true))
     animateSteps(dispatch, getState, true)
   }
 }
@@ -304,6 +314,7 @@ function animateSteps (dispatch, getState, reverse) {
 
   if ((!reverse && state.currentStep === state.steps) || (reverse && state.currentStep === 0)) {
     dispatch(setLoadingHandler(false))
+    dispatch(setAnimation(false))
   } else {
     _.delay(() => {
       animateSteps(dispatch, getState, reverse)
@@ -417,6 +428,9 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+  [SET_ANIMATION]: (state, action) => Object.assign({}, state, {
+    animation: action.payload
+  }),
   [SET_ERROR]: (state, action) => Object.assign({}, state, {
     error: action.payload
   }),
@@ -480,7 +494,8 @@ function getIitialState () {
     partsLoaded: 0,
     taskId: null,
     host: '',
-    error: ''
+    error: '',
+    animation: false
   }
 }
 

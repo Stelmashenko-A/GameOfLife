@@ -65,7 +65,7 @@ export const Dashboard = (props) => {
           <h4>Host: {props.host}
             <span className={props.loaded
               ? 'text-success'
-              : 'text-info'}>{props.loaded
+              : 'text-info'}>{props.partsLoaded === props.parts
                 ? ' processed '
                 : ' processes '}
               your request</span>
@@ -85,19 +85,19 @@ export const Dashboard = (props) => {
         <div className='actions'>
           <ButtonToolbar>
             <ButtonGroup>
-              <Button disabled={!props.loaded} onClick={props.prevButtonMaxHandler}>{'<<'}</Button>
-              <Button disabled={!props.loaded} onClick={props.prevButtonHandler}>{'<'}</Button>
+              <Button disabled={!props.loaded || props.animation} onClick={props.prevButtonMaxHandler}>{'<<'}</Button>
+              <Button disabled={!props.loaded || props.animation} onClick={props.prevButtonHandler}>{'<'}</Button>
             </ButtonGroup>
             <ButtonGroup>
               <Button disabled>{props.currentStep}</Button>
             </ButtonGroup>
             <ButtonGroup>
-              <Button disabled={!props.loaded} onClick={props.nextButtonHandler}>{'>'}</Button>
-              <Button disabled={!props.loaded} onClick={props.nextButtonMaxHandler}>{'>>'}</Button>
+              <Button disabled={!props.loaded || props.animation} onClick={props.nextButtonHandler}>{'>'}</Button>
+              <Button disabled={!props.loaded || props.animation} onClick={props.nextButtonMaxHandler}>{'>>'}</Button>
             </ButtonGroup>
             <ButtonGroup className='pull-right'>
-              <Button disabled={props.loading || !props.loaded} onClick={props.resetButtonHandler} bsStyle='danger'>Reset</Button>
-              <Button disabled={props.loading || props.loaded} onClick={props.calculateHandler} bsStyle='success'>Calculate</Button>
+              <Button disabled={props.loading || !props.loaded || props.animation} onClick={props.resetButtonHandler} bsStyle='danger'>Reset</Button>
+              <Button disabled={props.loading || props.loaded || props.animation} onClick={props.calculateHandler} bsStyle='success'>Calculate</Button>
             </ButtonGroup>
           </ButtonToolbar>
         </div>
