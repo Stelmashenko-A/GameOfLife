@@ -15,7 +15,7 @@ import GameField from './GameField'
 
 export const Dashboard = (props) => {
   return (
-    <Row>
+    <Row className='pg-dashboadrd'>
       <Col xs={12}>
         <div className='dashboard'>
           Dashboard
@@ -31,16 +31,19 @@ export const Dashboard = (props) => {
           <Row>
             <Col xs={4}>
               <FormGroup>
+                <div className='input-title'>Steps:</div>
                 <FormControl type='number' min={0} defaultValue={props.steps} disabled={props.loading} placeholder='Steps' onChange={props.onStepsChange}/>
               </FormGroup>
             </Col>
             <Col xs={4}>
               <FormGroup>
+                <div className='input-title'>Parts:</div>
                 <FormControl type='number' min={1} defaultValue={props.parts} disabled={props.loading} placeholder='Parts' onChange={props.onPartsChange}/>
               </FormGroup>
             </Col>
             <Col xs={4}>
               <FormGroup>
+                <div className='input-title'>Field size:</div>
                 <FormControl type='number' min={1} defaultValue={props.fieldSize} disabled={props.loading} placeholder='Size' onChange={props.onSizeChange}/>
               </FormGroup>
             </Col>

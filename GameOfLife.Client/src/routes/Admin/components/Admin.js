@@ -21,7 +21,7 @@ export const Admin = (props) => {
   })
 
   return (
-    <Row>
+    <Row className='admin'>
       <Col xs={12}>
         <Table striped bordered condensed hover>
           <thead>

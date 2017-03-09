@@ -318,7 +318,7 @@ function animateSteps (dispatch, getState, reverse) {
   } else {
     _.delay(() => {
       animateSteps(dispatch, getState, reverse)
-    }, 500)
+    }, 50)
   }
 }
 

@@ -1,12 +1,30 @@
-.tasks-header, .tasks-row {
-	text-align: center;
+.tasks-header,
+.tasks-row {
+  text-align: center;
 }
-.tasks-header:nth-child(0){
-	border-right: 1px solid #ddd;
+
+.tasks-header:nth-child(0) {
+  border-right: 1px solid #333;
 }
-.tasks-row{
-	border-top: 1px solid #ddd;
-	&:not(:first-child){
-		padding-top: 5px;
-	}
+
+.tasks-row {
+  border-top: 1px solid #333;
+
+  &:not(:first-child) {
+    padding-top: 5px;
+  }
+}
+
+.admin {
+  tr {
+    background-color: #090909 !important;
+  }
+
+  .table-bordered {
+    border: 1px solid #333;
+	color: #999;
+  }
+  th, td{
+	  border: 1px solid #333 !important;
+  }
 }

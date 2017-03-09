@@ -1,5 +1,25 @@
-.duck {
-  display: block;
-  width: 120px;
-  margin: 1.5rem auto;
+.home {
+  text-align: center;
+  margin-top: 150px;
+  margin-bottom: 150px;
+
+  .welcome-message {
+    margin-top: 200px;
+    font-size: 120px;
+
+    .or {
+      text-decoration: line-through;
+    }
+  }
+}
+
+a {
+  color: #999;
+
+  &:active,
+  &:focus,
+  &:hover {
+    color: #999;
+    text-decoration: none;
+  }
 }

@@ -1,43 +1,109 @@
-.dashboard {
-	border: 1px solid #000;
-	padding: 5px 10px;
-}
+.pg-dashboadrd {
+  .dashboard {
+    border: 1px solid #000;
+    padding: 5px 10px;
+    background-color: #090909;
+    color: #ccc;
+  }
 
-.actions,
-.game-board,
-.settings {
-	margin-top: 10px;
-}
+  .actions,
+  .game-board,
+  .settings {
+    margin-top: 10px;
+  }
 
-.game-field {
-	width: 100%;
+  table td {
+    width: 20px;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+  }
 
-	td {
-		text-align: center;
-		border: 1px solid #000;
+  .game-field {
+    margin: 0 auto;
 
-		input {
-			width: 20px;
-			height: 20px;
-		}
-	}
+    tr {
+      box-sizing: initial;
+    }
 
-	.point {
-		height: 20px;
-		margin: 5px;
+    tbody {
+      border: 1px solid #222;
+    }
 
-		&[disabled] {
-			&:hover {
-				cursor: not-allowed;
-			}
-		}
+    td {
+      text-align: center;
+      border: 1px solid #222;
+      width: 20px;
+      height: 20px;
 
-		&:hover {
-			cursor: pointer;
-		}
-	}
+      div {
+        width: 20px;
+        height: 20px;
+        padding: 0;
+      }
+    }
 
-	.active {
-		background-color: #000;
-	}
+    .point {
+      height: 20px;
+
+      &[disabled] {
+        &:hover {
+          cursor: not-allowed;
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .active {
+      background-color: #555;
+    }
+  }
+
+  input.form-control {
+    background-color: #090909;
+    border-color: #333;
+    width: 150px;
+    text-align: center;
+
+    &:active {
+      border-color: #666;
+    }
+
+    &:active,
+    &:disabled,
+    &:focus,
+    &:hover {
+      background-color: #090909;
+    }
+
+  }
+
+  .input-title {
+    float: left;
+    font-size: 22px;
+    margin-right: 5px;
+  }
+
+  .settings {
+    margin-top: 30px;
+  }
+
+  .btn-default {
+    background-color: #090909;
+    border-color: #333;
+    color: #888;
+
+    &:active,
+    &:focus {
+      border-color: #666;
+      outline-color: #666;
+    }
+  }
+
+  .btn-default[disabled]:hover {
+    background-color: #090909;
+  }
 }
